@@ -94,11 +94,14 @@ class SchemaFactory
     private $fieldMiddlewares = [];
     /** @var ExpressionLanguage|null */
     private $expressionLanguage;
+    /** @var RootTypeMapperInterface */
+    private $defaultEnumTypeMapper;
 
     public function __construct(CacheInterface $cache, ContainerInterface $container)
     {
         $this->cache     = new NamespacedCache($cache);
         $this->container = $container;
+        $this->defaultEnumTypeMapper = new MyCLabsEnumTypeMapper();
     }
 
     /**
@@ -246,6 +249,13 @@ class SchemaFactory
         return $this;
     }
 
+    public function setDefaultEnumTypeMapper(RootTypeMapperInterface $defaultEnumTypeMapper): self
+    {
+        $this->defaultEnumTypeMapper = $defaultEnumTypeMapper;
+
+        return $this;
+    }
+
     /**
      * Sets the time to live time of the cache for annotations in files.
      * By default this is set to 2 seconds which is ok for development environments.
@@ -325,7 +335,7 @@ class SchemaFactory
         $recursiveTypeMapper = new RecursiveTypeMapper($compositeTypeMapper, $namingStrategy, $this->cache, $typeRegistry);
 
         $rootTypeMappers   = $this->rootTypeMappers;
-        $rootTypeMappers[] = new MyCLabsEnumTypeMapper();
+        $rootTypeMappers[] = $this->defaultEnumTypeMapper;
         $rootTypeMappers[] = new BaseTypeMapper($recursiveTypeMapper);
         // Let's put all the root type mappers except the BaseTypeMapper (that needs a recursive type mapper and that will be built later)
         $compositeRootTypeMapper = new CompositeRootTypeMapper($rootTypeMappers);

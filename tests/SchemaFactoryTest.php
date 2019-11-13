@@ -19,6 +19,7 @@ use TheCodingMachine\GraphQLite\Mappers\Parameters\ContainerParameterHandler;
 use TheCodingMachine\GraphQLite\Mappers\Parameters\TypeHandler;
 use TheCodingMachine\GraphQLite\Mappers\RecursiveTypeMapperInterface;
 use TheCodingMachine\GraphQLite\Mappers\Root\CompositeRootTypeMapper;
+use TheCodingMachine\GraphQLite\Mappers\Root\MyCLabsEnumTypeMapper;
 use TheCodingMachine\GraphQLite\Mappers\StaticClassListTypeMapperFactory;
 use TheCodingMachine\GraphQLite\Mappers\TypeMapperFactoryInterface;
 use TheCodingMachine\GraphQLite\Mappers\TypeMapperInterface;
@@ -70,6 +71,7 @@ class SchemaFactoryTest extends TestCase
                 ->addQueryProviderFactory(new AggregateControllerQueryProviderFactory([], $container))
                 ->setSchemaConfig(new SchemaConfig())
                 ->setExpressionLanguage(new ExpressionLanguage(new Psr16Adapter(new ArrayCache())))
+                ->setDefaultEnumTypeMapper(new MyCLabsEnumTypeMapper())
                 ->devMode()
                 ->prodMode();
 

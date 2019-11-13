@@ -235,7 +235,27 @@ public function users(StatusEnum $status): array
 <div class="alert alert-info">There are many enumeration library in PHP and you might be using another library.
 If you want to add support for your own library, this is not extremely difficult to do. You need to register a custom
 "RootTypeMapper" with GraphQLite. You can learn more about <em>type mappers</em> in the <a href="internals.md">"internals" documentation</a>
-and <a href="https://github.com/thecodingmachine/graphqlite/blob/master/src/Mappers/Root/MyCLabsEnumTypeMapper.php">copy/paste and adapt the root type mapper used for myclabs/php-enum</a>.</div>
+and <a href="https://github.com/thecodingmachine/graphqlite/blob/master/src/Mappers/Root/MyCLabsEnumTypeMapper.php">copy/paste and adapt the root type mapper used for myclabs/php-enum</a>.
+</div>
+
+### Changing default enum implementation
+If you want you can swap the default enum implementation by changing it in the schema factory:
+
+```php
+$factory = new SchemaFactory($cache, $container);
+$factory->addControllerNamespace('App\\Controllers\\')
+        ->addTypeNamespace('App\\')
+        ->setDefaultEnumTypeMapper(new MyCustomEnumMapperImplementation());
+
+$schema = $factory->createSchema();
+```
+For symfony you can easily add this call in a compiler pass
+```php
+$schemaFactoryDefinition = $container->getDefinition(SchemaFactory::class);
+$voidMapperDefinition = $container->getDefinition(VoidMapper::class);
+$schemaFactoryDefinition->addMethodCall('setDefaultEnumTypeMapper', [$voidMapperDefinition]);
+```
+
 
 ## More scalar types
 
